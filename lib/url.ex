@@ -1,6 +1,4 @@
 defmodule ExFussballDeScraper.Url do
-
-  @error {:error, nil, nil}
   @default_scheme "https"
   @default_host "www.fussball.de"
   @default_path_regex ~r/\/mannschaft\/(?<team_rewrite>[^\/]+)\/-\/saison\/(?<saison>\d\d\d\d)\/team-id\/(?<team_id>[^\/]+)(#!(?<fragment>[^\/]+))*/
@@ -12,15 +10,18 @@ defmodule ExFussballDeScraper.Url do
     |> get_parameters_from_path()
   end
 
-  defp get_path_from_uri(%{host: host, path: path}) when host == @host do
-    {:ok, path}
+  defp get_path_from_uri(%{host: host, path: path}) do
+    case host == get_host() do
+      true -> {:ok, path}
+      _ -> {:error, :wrong_host}
+    end
   end
-  defp get_path_from_uri(_), do: @error
+  defp get_path_from_uri(_), do: {:error, :uri_parser_error}
 
-  defp get_parameters_from_path(@error), do: @error
+  defp get_parameters_from_path({:error, _} = error), do: error
   defp get_parameters_from_path({:ok, path}) do
     case Regex.named_captures(get_path_regex(), path) do
-      nil -> @error
+      nil -> {:error, :regex_parser_error}
       parameters -> {:ok, Map.get(parameters, "team_rewrite"), Map.get(parameters, "team_id")}
     end
   end

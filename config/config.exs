@@ -39,5 +39,5 @@ config :ex_fussball_de_scraper, :css,
 
 config :ex_fussball_de_scraper, :url,
   scheme: "https",
-  host: "www.fussball.de"
+  host: "www.fussball.de",
   path_regex: ~r/\/mannschaft\/(?<team_rewrite>[^\/]+)\/-\/saison\/(?<saison>\d\d\d\d)\/team-id\/(?<team_id>[^\/]+)(#!(?<fragment>[^\/]+))*/

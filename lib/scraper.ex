@@ -39,6 +39,10 @@ defmodule ExFussballDeScraper.Scraper do
       html
       |> find_team_name()
       |> find_table()
+      |> remove_images()
+      |> remove_links()
+      |> replace_bootstrap_3_classes()
+      |> replace_bootstrap_3_glyphicons()
       |> get_result()
     {:ok, map, created_at}
   end
@@ -91,6 +95,35 @@ defmodule ExFussballDeScraper.Scraper do
     %{html: html, result: Map.put(result, :current_table, table)}
   end
 
+  defp remove_images(%{html: html, result: %{current_table: current_table} = result}) do
+    current_table = Regex.replace(~r/<img .+?>/, current_table, "")
+    current_table = Regex.replace(~r/<div class="club-logo table-image"><\/div>/, current_table, "")
+    %{html: html, result: Map.put(result, :current_table, current_table)}
+  end
+
+  defp remove_links(%{html: html, result: %{current_table: current_table} = result}) do
+    current_table = Regex.replace(~r/<a .+?>/, current_table, "")
+    current_table = Regex.replace(~r/<\/a>/, current_table, "")
+    %{html: html, result: Map.put(result, :current_table, current_table)}
+  end
+
+  defp replace_bootstrap_3_classes(%{html: html, result: %{current_table: current_table} = result}) do
+    current_table = Regex.replace(~r/hidden-small/, current_table, "hidden-xs hidden-sm visible-md-* visible-lg-*")
+    current_table = Regex.replace(~r/visible-small/, current_table, "visible-xs-* visible-sm-* hidden-md hidden-lg")
+    current_table = Regex.replace(~r/table-full-width/, current_table, "table-bordered")
+    %{html: html, result: Map.put(result, :current_table, current_table)}
+  end
+
+  defp replace_bootstrap_3_glyphicons(%{html: html, result: %{current_table: current_table} = result}) do
+    current_table = Regex.replace(~r/"icon-arrow-up"/, current_table, "\"glyphicon glyphicon-arrow-up\"")
+    current_table = Regex.replace(~r/"icon-arrow-right"/, current_table, "\"glyphicon glyphicon-arrow-right\"")
+    current_table = Regex.replace(~r/"icon-arrow-down"/, current_table, "\"glyphicon glyphicon-arrow-down\"")
+    current_table = Regex.replace(~r/"icon-arrow-left"/, current_table, "\"glyphicon glyphicon-arrow-left\"")
+
+    current_table = Regex.replace(~r/"icon-arrow-up-right"/, current_table, "\"glyphicon glyphicon-arrow-up\"")
+    current_table = Regex.replace(~r/"icon-arrow-down-right"/, current_table, "\"glyphicon glyphicon-arrow-down\"")
+    %{html: html, result: Map.put(result, :current_table, current_table)}
+  end
 
   defp datetime_text_to_iso(text) do
     datetime =
