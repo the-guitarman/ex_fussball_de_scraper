@@ -111,6 +111,9 @@ defmodule ExFussballDeScraper.Scraper do
     current_table = Regex.replace(~r/hidden-small/, current_table, "hidden-xs hidden-sm visible-md-* visible-lg-*")
     current_table = Regex.replace(~r/visible-small/, current_table, "visible-xs-* visible-sm-* hidden-md hidden-lg")
     current_table = Regex.replace(~r/table-full-width/, current_table, "table-bordered")
+    current_table = Regex.replace(~r/club-[a-z]+/, current_table, "")
+    current_table = Regex.replace(~r/column-[a-z]+/, current_table, "")
+    current_table = Regex.replace(~r/class="\s*?"/, current_table, "")
     %{html: html, result: Map.put(result, :current_table, current_table)}
   end
 
