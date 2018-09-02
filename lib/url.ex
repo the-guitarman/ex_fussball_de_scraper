@@ -1,4 +1,8 @@
 defmodule ExFussballDeScraper.Url do
+  @moduledoc """
+  Parses, checks and builds fussball.de team urls.
+  """
+
   @default_scheme "https"
   @default_host "www.fussball.de"
   @default_path_regex ~r/\/mannschaft\/(?<team_rewrite>[^\/]+)\/-\/saison\/(?<saison>\d\d\d\d)\/team-id\/(?<team_id>[^\/]+)(#!(?<fragment>[^\/]+))*/
