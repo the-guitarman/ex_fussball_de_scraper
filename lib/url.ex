@@ -3,6 +3,20 @@ defmodule ExFussballDeScraper.Url do
   @default_host "www.fussball.de"
   @default_path_regex ~r/\/mannschaft\/(?<team_rewrite>[^\/]+)\/-\/saison\/(?<saison>\d\d\d\d)\/team-id\/(?<team_id>[^\/]+)(#!(?<fragment>[^\/]+))*/
 
+  @doc """
+  Parses und checks a fussball.de url. 
+
+  ## Example usage
+  iex> ExFussballDeScraper.Url.parse("https://www.some-domain.de/some/path")
+  {:error, :wrong_host}
+
+  iex> ExFussballDeScraper.Url.parse("https://www.fussball.de/some/path")
+  {:error, :regex_parser_error}
+
+  iex> ExFussballDeScraper.Url.parse("https://www.fussball.de/mannschaft/club-name-team-rewrite/-/saison/1819/team-id/the-team-id/011MI9PRR0000000VTVG0001VTR8C1K7#!/section/stage")
+  {:ok, "club-name-team-rewrite", "the-team-id"}
+  """
+  @spec parse(String) :: {:ok, String, String}|{:error, Atom}
   def parse(url) do
     url
     |> URI.parse()
@@ -32,7 +46,14 @@ defmodule ExFussballDeScraper.Url do
 
 
 
+  @doc """
+  Parses und checks a fussball.de url. 
 
+  ## Example usage
+  iex> ExFussballDeScraper.Url.build("club-name-team-rewrite", "the-team-id")
+  "https://www.fussball.de/mannschaft/club-name-team-rewrite/-/saison/1819/team-id/the-team-id"
+  """
+  @spec build(String, String) :: String
   def build(team_rewrite, team_id) do
     get_scheme() <> "://" <> get_host() <> "/mannschaft/" <> team_rewrite <> "/-/saison/" <> get_current_saison() <> "/team-id/" <> team_id
   end
