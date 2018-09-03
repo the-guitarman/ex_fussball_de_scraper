@@ -1,0 +1,25 @@
+---
+engines:
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - elixir
+      - javascript
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "**.ex"
+  - "**.exs"
+  - "**.css"
+  - "**.inc"
+  - "**.js"
+  - "**.module"
+exclude_paths:
+- config/**/*
+- web/static/vendor/**/*

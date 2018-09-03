@@ -1,0 +1,19 @@
+language: elixir
+elixir:
+  - 1.6
+env:
+  - ELIXIR="v1.6.0"
+otp_release:
+  - 19.0
+sudo: false
+before_script:
+  - mkdir -p vendor/elixir
+  - wget -q https://github.com/elixir-lang/elixir/releases/download/$ELIXIR/Precompiled.zip && unzip -qq Precompiled.zip -d vendor/elixir
+  - export PATH="$PATH:$PWD/vendor/elixir/bin"
+  - mix local.hex --force
+  - mix deps.get --only test
+#script: MIX_ENV=test mix do deps.get, test
+script: MIX_ENV=test mix test
+addons:
+  code_climate:
+    repo_token: f4c6a8cbc81b9942ae98f71ebff6ab199b9da14bb09974f49a9977cbae4b5799

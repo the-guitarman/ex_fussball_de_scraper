@@ -3,17 +3,22 @@ defmodule ExFussballDeScraper.GenServerTest do
   doctest ExFussballDeScraper.GenServer
 
   setup do
-    gen_server = start_supervised!(ExFussballDeScraper.GenServer)
-    %{gen_server: gen_server}
+    pid = start_supervised!(ExFussballDeScraper.GenServer)
+    %{gen_server_pid: pid}
   end
 
-  # test "spawns buckets", %{registry: registry} do
-  #   assert KV.Registry.lookup(registry, "shopping") == :error
+  test "spawns buckets", %{gen_server_pid: _pid} do
+    {:ok, html, created_at} = ExFussballDeScraper.GenServer.get("club-name-team-rewrite", "team-id")
 
-  #   KV.Registry.create(registry, "shopping")
-  #   assert {:ok, bucket} = KV.Registry.lookup(registry, "shopping")
+    assert String.contains?(html, "<!doctype html>")
 
-  #   KV.Bucket.put(bucket, "milk", 1)
-  #   assert KV.Bucket.get(bucket, "milk") == 1
-  # end
+    created_at =
+      created_at
+      |> Timex.from_unix()
+      |> Timex.Timezone.convert(Timex.Timezone.Local.lookup())
+
+    assert created_at.year == Timex.local().year
+    assert created_at.minute == Timex.local().minute
+    assert created_at.second == Timex.local().second
+  end
 end

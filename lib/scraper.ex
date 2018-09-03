@@ -1,4 +1,7 @@
 defmodule ExFussballDeScraper.Scraper do
+  @moduledoc """
+  Grabs some content from a fussball.de team website.
+  """
 
   @css_defaults %{
     team_name: ".stage-team h2",
@@ -9,8 +12,10 @@ defmodule ExFussballDeScraper.Scraper do
     current_table: "#team-fixture-league-tables > table"
   }
 
-  # {:ok, %{team_name: team_name, matches: matches_map}, created_at}
-  # {:error, reason, created_at}
+  @doc """
+  Returns the next matches from a fussball.de team website. 
+  """
+  @spec next_matches(String, String) :: {:ok, Map, Integer} | {:error, Atom, Integer}
   def next_matches(team_rewrite, team_id) do
     ExFussballDeScraper.GenServer.get(team_rewrite, team_id)
     |> grab_next_matches()
@@ -26,13 +31,14 @@ defmodule ExFussballDeScraper.Scraper do
     {:ok, map, created_at}
   end
 
+  @doc """
+  Returns the current table from a fussball.de team website. 
+  """
   def current_table(team_rewrite, team_id) do
     ExFussballDeScraper.GenServer.get(team_rewrite, team_id)
     |> grab_current_table()
   end
 
-  # {:ok, %{team_name: team_name, current_table: html}, created_at}
-  # {:error, reason, created_at}
   defp grab_current_table({:error, reason, created_at}), do: {:error, reason, created_at}
   defp grab_current_table({:ok, html, created_at}) do
     map =
