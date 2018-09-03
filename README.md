@@ -8,7 +8,7 @@ This application grabs next matches and the current table from a fussball.de tea
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as addition `ex_fussball_de_scraper` in your list of dependencies in `mix.exs`:
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed as dependency `ex_fussball_de_scraper` in `mix.exs`:
 
     ```elixir
     def deps do
