@@ -6,9 +6,9 @@ defmodule ExFussballDeScraper.Scraper do
   @css_defaults %{
     team_name: ".stage-team h2",
     matches: "#id-team-matchplan-table tbody tr",
-    match_headline: "td:first-child",
-    match_headline_splitter: "|",
-    match_club_names: "td.column-club .club-name",
+    matches_match_headline: "td:first-child",
+    matches_match_headline_splitter: "|",
+    matches_match_club_names: "td.column-club .club-name",
     current_table: "#team-fixture-league-tables > table"
   }
 
@@ -77,12 +77,12 @@ defmodule ExFussballDeScraper.Scraper do
 
   defp extract_match(markup) do
     [start_at | [competition]] =
-      Floki.find(markup, get_css_path(:match_headline))
+      Floki.find(markup, get_css_path(:matches_match_headline))
       |> List.first()
       |> Floki.text()
-      |> String.split(get_css_path(:match_headline_splitter))
+      |> String.split(get_css_path(:matches_match_headline_splitter))
       |> Enum.map(&String.trim/1)
-    club_names = Floki.find(markup, get_css_path(:match_club_names))
+    club_names = Floki.find(markup, get_css_path(:matches_match_club_names))
     %{
       start_at: start_at |> datetime_text_to_iso(),
 	    competition: competition,
