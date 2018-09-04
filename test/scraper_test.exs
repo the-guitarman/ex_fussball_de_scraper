@@ -4,6 +4,7 @@ defmodule ExFussballDeScraper.ScraperTest do
 
   test "grabbing of the next team matches" do
     {:ok, map, _created_at} = ExFussballDeScraper.Scraper.next_matches("club-name-team-rewrite", "team-id")
+    IO.inspect map
     assert map.team_name == "Spvgg. Blau-Weiß Chemnitz 02"
 
     [first_match | _other_matches] = map.matches

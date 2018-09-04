@@ -7,6 +7,8 @@ otp_release:
   - 19.0
 sudo: false
 before_script:
+  - echo 'Berlin/Europe' | sudo tee /etc/timezone
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
   - mkdir -p vendor/elixir
   - wget -q https://github.com/elixir-lang/elixir/releases/download/$ELIXIR/Precompiled.zip && unzip -qq Precompiled.zip -d vendor/elixir
   - export PATH="$PATH:$PWD/vendor/elixir/bin"
@@ -16,4 +18,4 @@ before_script:
 script: MIX_ENV=test mix test
 addons:
   code_climate:
-    repo_token: f4c6a8cbc81b9942ae98f71ebff6ab199b9da14bb09974f49a9977cbae4b5799
+    repo_token: 0bf99584138a6bf1b0fcbaa5a74f2e146fe7b99314ea6ceccf1edb55c8337c56
