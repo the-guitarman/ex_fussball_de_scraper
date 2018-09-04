@@ -1,5 +1,5 @@
----
-engines:
+--
+plugins:
   csslint:
     enabled: true
   duplication:
@@ -20,6 +20,6 @@ ratings:
   - "**.inc"
   - "**.js"
   - "**.module"
-exclude_paths:
+exclude_patterns:
 - config/**/*
 - web/static/vendor/**/*

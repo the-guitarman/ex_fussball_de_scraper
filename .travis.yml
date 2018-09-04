@@ -1,3 +1,6 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=0bf99584138a6bf1b0fcbaa5a74f2e146fe7b99314ea6ceccf1edb55c8337c56
 language: elixir
 elixir:
   - 1.6
@@ -7,6 +10,9 @@ otp_release:
   - 19.0
 sudo: false
 before_script:
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
   - echo 'Berlin/Europe' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
   - mkdir -p vendor/elixir
@@ -14,6 +20,8 @@ before_script:
   - export PATH="$PATH:$PWD/vendor/elixir/bin"
   - mix local.hex --force
   - mix deps.get --only test
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 #script: MIX_ENV=test mix do deps.get, test
 script: MIX_ENV=test mix test
 addons:
