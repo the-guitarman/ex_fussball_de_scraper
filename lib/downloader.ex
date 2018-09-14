@@ -18,8 +18,10 @@ defmodule ExFussballDeScraper.Downloader do
     url = get_module(Mix.env()).build(team_rewrite, team_id)
     case url do
       "file://" <> file ->
-        {:ok, body} = File.read(file)
-        {:ok, %{body: body}}
+        case File.read(file) do
+          {:ok, body} -> {:ok, %{body: body}}
+          {:error, :enoent} -> {:ok, %{body: ""}}
+        end
       _ ->
         __MODULE__.get(url, get_headers(), get_hackney_parameters())
     end
