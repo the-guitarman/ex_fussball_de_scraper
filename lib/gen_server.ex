@@ -1,6 +1,8 @@
 defmodule ExFussballDeScraper.GenServer do
   use GenServer
 
+  @default_call_timeout 2000
+
   ## Client API
 
   @doc """
@@ -16,7 +18,11 @@ defmodule ExFussballDeScraper.GenServer do
   * `{:error, error_reason_string}`
   """
   def get(team_rewrite, team_id) do
-    GenServer.call __MODULE__, {:get, team_rewrite, team_id}
+    try do
+      GenServer.call __MODULE__, {:get, team_rewrite, team_id}, get_timeout_config()
+    catch
+      _error, _params -> {:error, :gen_server_error, timestamp_now()}
+    end
   end
 
   ## Server Callbacks
@@ -47,8 +53,17 @@ defmodule ExFussballDeScraper.GenServer do
       Map.get(new_data, main_key)
       |> get_reply()
 
-    {:reply, reply, new_data}
+    {:reply, reply, new_data, get_timeout_config()}
   end
+
+  def handle_info(:timeout, state) do
+    IO.puts "handle_info - 1"
+    IO.inspect :timeout
+    IO.inspect state
+    IO.puts "handle_info - 2"
+    {:noreply, state}
+  end
+  def handle_info(_message, state), do: {:noreply, state}
 
   defp get_reply({:ok, %{created_at: created_at, html: html}}), do: {:ok, html, created_at}
   defp get_reply({:error, %{created_at: created_at, reason: reason}}), do: {:error, reason, created_at}
@@ -78,5 +93,9 @@ defmodule ExFussballDeScraper.GenServer do
   defp main_key(team_rewrite, team_id) do
     team_rewrite <> "_" <> team_id
     |> String.to_atom()
+  end
+
+  defp get_timeout_config() do
+    Application.get_env(:ex_fussball_de_scraper, :gen_server)[:call_timeout] || @default_call_timeout
   end
 end

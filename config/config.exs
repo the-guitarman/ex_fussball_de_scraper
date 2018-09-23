@@ -41,3 +41,6 @@ config :ex_fussball_de_scraper, :url,
   scheme: "https",
   host: "www.fussball.de",
   path_regex: ~r/\/mannschaft\/(?<team_rewrite>[^\/]+)\/-\/saison\/(?<saison>\d\d\d\d)\/team-id\/(?<team_id>[^\/]+)(#!(?<fragment>[^\/]+))*/
+
+config :ex_fussball_de_scraper, :gen_server,
+  call_timeout: 2000

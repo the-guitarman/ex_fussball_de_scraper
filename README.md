@@ -10,13 +10,13 @@ This application grabs next matches and the current table from a fussball.de tea
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as dependency `ex_fussball_de_scraper` in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [
-        {:ex_fussball_de_scraper, "~> 0.1"}
-      ]
-    end
-    ```
+```elixir
+def deps do
+  [
+    {:ex_fussball_de_scraper, "~> 0.1"}
+  ]
+end
+```
 
 ### Configuration
 
@@ -36,9 +36,11 @@ config :ex_fussball_de_scraper, :url,
   host: "www.fussball.de",
   path_regex: ~r/\/mannschaft\/(?<team_rewrite>[^\/]+)\/-\/saison\/(?<saison>\d\d\d\d)\/team-id\/(?<team_id>[^\/]+)(#!(?<fragment>[^\/]+))*/
   
+config :ex_fussball_de_scraper, :gen_server,
+  call_timeout: 2000
 ```
 
- You may overwrite it by setting some of these configurations in your project.
+You may overwrite it by setting some of these configurations in your project.
 
 ## Usage
 
