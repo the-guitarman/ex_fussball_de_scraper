@@ -8,7 +8,7 @@ defmodule ExFussballDeScraper.Scraper do
     matches: "#id-team-matchplan-table tbody tr",
     matches_match_id: "td:last-child a",
     matches_match_id_splitter: " ",
-    matches_match_headline: "tr:first-child td:first-child",
+    matches_match_headline: "td:first-child",
     matches_match_headline_splitter: "|",
     matches_match_club_names: "td.column-club .club-name",
     current_table: "#team-fixture-league-tables > table"
