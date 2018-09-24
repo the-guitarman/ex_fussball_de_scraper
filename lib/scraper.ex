@@ -7,7 +7,7 @@ defmodule ExFussballDeScraper.Scraper do
     team_name: ".stage-team h2",
     matches: "#id-team-matchplan-table tbody tr",
     matches_match_id: "td:last-child a",
-    matches_match_id_splitter: "|",
+    matches_match_id_splitter: " ",
     matches_match_headline: "tr:first-child td:first-child",
     matches_match_headline_splitter: "|",
     matches_match_club_names: "td.column-club .club-name",
@@ -81,8 +81,8 @@ defmodule ExFussballDeScraper.Scraper do
     id =
       Floki.find(markup, get_css_path(:matches_match_id))
       |> Enum.filter(fn({_, _, [first | _rest]}) -> is_binary(first) end)
-      |> IO.inspect
       |> Floki.text()
+      |> String.trim()
       |> String.split(get_css_path(:matches_match_id_splitter))
       |> List.last()
       |> String.trim()
