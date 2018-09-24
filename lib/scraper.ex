@@ -6,7 +6,9 @@ defmodule ExFussballDeScraper.Scraper do
   @css_defaults %{
     team_name: ".stage-team h2",
     matches: "#id-team-matchplan-table tbody tr",
-    matches_match_headline: "td:first-child",
+    matches_match_id: "td:last-child a",
+    matches_match_id_splitter: "|",
+    matches_match_headline: "tr:first-child td:first-child",
     matches_match_headline_splitter: "|",
     matches_match_club_names: "td.column-club .club-name",
     current_table: "#team-fixture-league-tables > table"
@@ -76,6 +78,14 @@ defmodule ExFussballDeScraper.Scraper do
   end
 
   defp extract_match(markup) do
+    id =
+      Floki.find(markup, get_css_path(:matches_match_id))
+      |> Enum.filter(fn({_, _, [first | _rest]}) -> is_binary(first) end)
+      |> IO.inspect
+      |> Floki.text()
+      |> String.split(get_css_path(:matches_match_id_splitter))
+      |> List.last()
+      |> String.trim()
     [start_at | [competition]] =
       Floki.find(markup, get_css_path(:matches_match_headline))
       |> List.first()
@@ -84,6 +94,7 @@ defmodule ExFussballDeScraper.Scraper do
       |> Enum.map(&String.trim/1)
     club_names = Floki.find(markup, get_css_path(:matches_match_club_names))
     %{
+      id: id,
       start_at: start_at |> datetime_text_to_iso(),
 	    competition: competition,
 	    home: club_names |> List.first() |> Floki.text() |> String.trim(),

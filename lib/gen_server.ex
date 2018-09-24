@@ -56,6 +56,8 @@ defmodule ExFussballDeScraper.GenServer do
     {:reply, reply, new_data, get_timeout_config()}
   end
 
+  def handle_info(:timeout, state), do: {:noreply, state}
+
   defp get_reply({:ok, %{created_at: created_at, html: html}}), do: {:ok, html, created_at}
   defp get_reply({:error, %{created_at: created_at, reason: reason}}), do: {:error, reason, created_at}
 

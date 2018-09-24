@@ -32,6 +32,8 @@ use Mix.Config
 config :ex_fussball_de_scraper, :css,
   team_name: ".stage-team h2",
   matches: "#id-team-matchplan-table tbody tr",
+  matches_match_id: "td:last-child a",
+  matches_match_id_splitter: "|",
   matches_match_headline: "td:first-child",
   matches_match_headline_splitter: "|",
   matches_match_club_names: "td.column-club .club-name",
