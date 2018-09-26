@@ -24,9 +24,11 @@ defmodule ExFussballDeScraper.Downloader do
         end
       _ ->
         __MODULE__.get(url, get_headers(), get_hackney_parameters())
+        |> IO.inspect
     end
   end
 
+  defp get_result({:error, %HTTPoison.Error{reason: error_reason}}), do: {:error, error_reason}
   defp get_result({:error, error_reason}), do: {:error, error_reason}
   defp get_result({:ok, result}), do: {:ok, result.body}
 
