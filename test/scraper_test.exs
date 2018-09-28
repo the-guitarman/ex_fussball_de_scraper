@@ -7,7 +7,7 @@ defmodule ExFussballDeScraper.ScraperTest do
     assert map.team_name == "Spvgg. Blau-Weiß Chemnitz 02"
 
     [first_match | _other_matches] = map.matches
-    assert first_match.id =~ ~r/[0-9]+/
+    assert first_match.id =~ ~r/ME \| [0-9]+/
     assert first_match.competition == "Landesklasse"
     assert first_match.guest == "Spvgg. Blau-Weiß Chemnitz 02"
     assert first_match.home == "ESV Lok Zwickau"
