@@ -24,7 +24,6 @@ defmodule ExFussballDeScraper.Downloader do
         end
       _ ->
         __MODULE__.get(url, get_headers(), get_hackney_parameters())
-        |> IO.inspect
     end
   end
 
