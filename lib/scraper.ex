@@ -10,7 +10,11 @@ defmodule ExFussballDeScraper.Scraper do
     matches_match_headline: "td:first-child",
     matches_match_headline_splitter: "|",
     matches_match_club_names: "td.column-club .club-name",
-    current_table: "#team-fixture-league-tables > table"
+    current_table: "#team-fixture-league-tables > table",
+    season: "select[name=\"saison\"] option:first-child",
+    season_split_at: "/",
+    season_join_with: "-"
+
   }
 
   @doc """
@@ -25,8 +29,9 @@ defmodule ExFussballDeScraper.Scraper do
   defp grab_next_matches({:error, reason, created_at}), do: {:error, reason, created_at}
   defp grab_next_matches({:ok, html, created_at}) do
     map =
-      html
+      %{html: html, result: %{}}
       |> find_team_name()
+      |> find_season()
       |> find_matches()
       |> get_result()
     {:ok, map, created_at}
@@ -43,7 +48,7 @@ defmodule ExFussballDeScraper.Scraper do
   defp grab_current_table({:error, reason, created_at}), do: {:error, reason, created_at}
   defp grab_current_table({:ok, html, created_at}) do
     map =
-      html
+      %{html: html, result: %{}}
       |> find_team_name()
       |> find_table()
       |> remove_images()
@@ -59,12 +64,24 @@ defmodule ExFussballDeScraper.Scraper do
     result
   end
 
-  defp find_team_name(html) do
+  defp find_team_name(%{html: html, result: result}) do
     team_name =
       html
       |> Floki.find(get_css_path(:team_name))
       |> Floki.text()
-    %{html: html, result: %{team_name: team_name}}
+    %{html: html, result: Map.put(result, :team_name, team_name)}
+  end
+
+  defp find_season(%{html: html, result: result}) do
+    season =
+      html
+      |> Floki.find(get_css_path(:season))
+      |> Enum.map(&Floki.text/1)
+      |> Enum.sort(&(&1 >= &2))
+      |> List.first()
+      |> String.split(get_css_path(:season_split_at))
+      |> Enum.join(get_css_path(:season_join_with))
+    %{html: html, result: Map.put(result, :season, season)}
   end
 
   defp find_matches(%{html: html, result: result}) do

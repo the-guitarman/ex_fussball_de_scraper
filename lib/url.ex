@@ -52,10 +52,6 @@ defmodule ExFussballDeScraper.Url do
 
   @doc """
   Parses und checks a fussball.de url. 
-
-  ## Example usage
-  iex> ExFussballDeScraper.Url.build("club-name-team-rewrite", "the-team-id")
-  "https://www.fussball.de/mannschaft/club-name-team-rewrite/-/saison/1819/team-id/the-team-id"
   """
   @spec build(String, String) :: String
   def build(team_rewrite, team_id) do

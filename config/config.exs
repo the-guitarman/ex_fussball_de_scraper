@@ -36,7 +36,10 @@ config :ex_fussball_de_scraper, :css,
   matches_match_headline: "td:first-child",
   matches_match_headline_splitter: "|",
   matches_match_club_names: "td.column-club .club-name",
-  current_table: "#team-fixture-league-tables > table"
+  current_table: "#team-fixture-league-tables > table",
+  season: "select[name=\"saison\"] option:first-child",
+  season_split_at: "/",
+  season_join_with: "-"
 
 config :ex_fussball_de_scraper, :url,
   scheme: "https",
