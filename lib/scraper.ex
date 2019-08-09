@@ -50,6 +50,7 @@ defmodule ExFussballDeScraper.Scraper do
     map =
       %{html: html, result: %{}}
       |> find_team_name()
+      |> find_season()
       |> find_table()
       |> remove_images()
       |> remove_links()
