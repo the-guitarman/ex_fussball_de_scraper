@@ -30,7 +30,7 @@ defmodule ExFussballDeScraper.MixProject do
       {:httpoison, "~> 0.8"},
       {:timex, "~> 3.3"},
       {:floki, "~> 0.20"},
-      {:ex_doc, "~> 0.18.0", only: :dev}
+      {:ex_doc, "~> 0.21", only: :dev}
     ]
   end
 
