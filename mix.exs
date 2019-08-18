@@ -27,9 +27,9 @@ defmodule ExFussballDeScraper.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 0.8"},
-      {:timex, "~> 3.3"},
-      {:floki, "~> 0.20"},
+      {:httpoison, "~> 1.5"},
+      {:timex, "~> 3.6"},
+      {:floki, "~> 0.21"},
       {:ex_doc, "~> 0.21", only: :dev}
     ]
   end
