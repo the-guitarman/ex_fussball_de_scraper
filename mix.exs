@@ -4,8 +4,8 @@ defmodule ExFussballDeScraper.MixProject do
   def project do
     [
       app: :ex_fussball_de_scraper,
-      version: "0.1.8",
-      elixir: "~> 1.6",
+      version: "0.1.9",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       build_embedded: Mix.env == :prod,
       docs: [extras: ["README.md"]],

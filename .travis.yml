@@ -3,11 +3,11 @@ env:
     - CC_TEST_REPORTER_ID=0bf99584138a6bf1b0fcbaa5a74f2e146fe7b99314ea6ceccf1edb55c8337c56
 language: elixir
 elixir:
-  - 1.6
+  - 1.9
 env:
-  - ELIXIR="v1.6.0"
+  - ELIXIR="v1.9.1"
 otp_release:
-  - 19.0
+  - 22.0
 sudo: false
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

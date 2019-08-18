@@ -80,6 +80,7 @@ defmodule ExFussballDeScraper.Scraper do
       |> Enum.map(&Floki.text/1)
       |> Enum.sort(&(&1 >= &2))
       |> List.first()
+      |> to_string()
       |> String.split(get_css_path(:season_split_at))
       |> Enum.join(get_css_path(:season_join_with))
     %{html: html, result: Map.put(result, :season, season)}
@@ -89,7 +90,7 @@ defmodule ExFussballDeScraper.Scraper do
     matches =
       html
       |> Floki.find(get_css_path(:matches))
-      |> Enum.chunk(3)
+      |> Enum.chunk_every(3)
       |> Enum.map(&extract_match/1)
     %{html: html, result: Map.put(result, :matches, matches)}
   end
@@ -164,6 +165,7 @@ defmodule ExFussballDeScraper.Scraper do
       text
       |> String.split(",")
       |> List.last()
+      |> to_string()
       |> String.trim()
       |> Timex.parse!("%d.%m.%Y - %H:%M Uhr", :strftime)
 
