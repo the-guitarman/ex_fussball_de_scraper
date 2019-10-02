@@ -37,25 +37,37 @@ defmodule ExFussballDeScraper.Scraper do
     {:ok, map, created_at}
   end
 
+
+
+
   @doc """
   Returns the current table from a fussball.de team website. 
   """
+  @spec current_table(String.t, String.t) :: {:ok, Map.t, Integer.t} | {:error, Atom.t, Integer.t}
   def current_table(team_rewrite, team_id) do
     ExFussballDeScraper.GenServer.get(team_rewrite, team_id)
     |> grab_current_table()
   end
 
+  @doc """
+  Grabs the table html from the given page html.
+  """
+  @spec grab_table(String.t) :: String.t
+  def grab_table(page_html) do
+    page_html
+    |> Floki.find(get_css_path(:current_table))
+    |> Floki.raw_html()
+    |> String.replace("\n", "")
+    |> String.replace("\t", "")
+  end
+
   defp grab_current_table({:error, reason, created_at}), do: {:error, reason, created_at}
-  defp grab_current_table({:ok, html, created_at}) do
+  defp grab_current_table({:ok, page_html, created_at}) do
     map =
-      %{html: html, result: %{}}
+      %{html: page_html, result: %{}}
       |> find_team_name()
       |> find_season()
       |> find_table()
-      |> remove_images()
-      |> remove_links()
-      |> replace_bootstrap_3_classes()
-      |> replace_bootstrap_3_glyphicons()
       |> get_result()
     {:ok, map, created_at}
   end
@@ -117,47 +129,43 @@ defmodule ExFussballDeScraper.Scraper do
     }
   end
 
-  defp find_table(%{html: html, result: result}) do
-    table =
-      html
-      |> Floki.find(get_css_path(:current_table))
-      |> Floki.raw_html()
-      |> String.replace("\n", "")
-      |> String.replace("\t", "")
-    %{html: html, result: Map.put(result, :current_table, table)}
+  defp find_table(%{html: page_html, result: result}) do
+    table_html =
+      page_html
+      |> grab_table()
+      |> remove_images()
+      |> remove_links()
+      |> replace_bootstrap_3_classes()
+      |> replace_bootstrap_3_glyphicons()
+    %{html: page_html, result: Map.put(result, :current_table, table_html)}
   end
 
-  defp remove_images(%{html: html, result: %{current_table: current_table} = result}) do
-    current_table = Regex.replace(~r/<img .+?>/, current_table, "")
-    current_table = Regex.replace(~r/<div class="club-logo table-image"><\/div>/, current_table, "")
-    %{html: html, result: Map.put(result, :current_table, current_table)}
+  defp remove_images(table_html) do
+    table_html = Regex.replace(~r/<img .+?>/, table_html, "")
+    Regex.replace(~r/<div class="club-logo table-image"><\/div>/, table_html, "")
   end
 
-  defp remove_links(%{html: html, result: %{current_table: current_table} = result}) do
-    current_table = Regex.replace(~r/<a .+?>/, current_table, "")
-    current_table = Regex.replace(~r/<\/a>/, current_table, "")
-    %{html: html, result: Map.put(result, :current_table, current_table)}
+  defp remove_links(table_html) do
+    table_html = Regex.replace(~r/<a .+?>/, table_html, "")
+    Regex.replace(~r/<\/a>/, table_html, "")
   end
 
-  defp replace_bootstrap_3_classes(%{html: html, result: %{current_table: current_table} = result}) do
-    current_table = Regex.replace(~r/hidden-small/, current_table, "hidden-xs hidden-sm visible-md-* visible-lg-*")
-    current_table = Regex.replace(~r/visible-small/, current_table, "visible-xs-* visible-sm-* hidden-md hidden-lg")
-    current_table = Regex.replace(~r/table-full-width/, current_table, "table-bordered")
-    current_table = Regex.replace(~r/club-[a-z]+/, current_table, "")
-    current_table = Regex.replace(~r/column-[a-z]+/, current_table, "")
-    current_table = Regex.replace(~r/class="\s*?"/, current_table, "")
-    %{html: html, result: Map.put(result, :current_table, current_table)}
+  defp replace_bootstrap_3_classes(table_html) do
+    table_html = Regex.replace(~r/hidden-small/, table_html, "hidden-xs hidden-sm visible-md-* visible-lg-*")
+    table_html = Regex.replace(~r/visible-small/, table_html, "visible-xs-* visible-sm-* hidden-md hidden-lg")
+    table_html = Regex.replace(~r/table-full-width/, table_html, "table-bordered")
+    table_html = Regex.replace(~r/club-[a-z]+/, table_html, "")
+    table_html = Regex.replace(~r/column-[a-z]+/, table_html, "")
+    Regex.replace(~r/class="\s*?"/, table_html, "")
   end
 
-  defp replace_bootstrap_3_glyphicons(%{html: html, result: %{current_table: current_table} = result}) do
-    current_table = Regex.replace(~r/"icon-arrow-up"/, current_table, "\"glyphicon glyphicon-arrow-up\"")
-    current_table = Regex.replace(~r/"icon-arrow-right"/, current_table, "\"glyphicon glyphicon-arrow-right\"")
-    current_table = Regex.replace(~r/"icon-arrow-down"/, current_table, "\"glyphicon glyphicon-arrow-down\"")
-    current_table = Regex.replace(~r/"icon-arrow-left"/, current_table, "\"glyphicon glyphicon-arrow-left\"")
-
-    current_table = Regex.replace(~r/"icon-arrow-up-right"/, current_table, "\"glyphicon glyphicon-arrow-up\"")
-    current_table = Regex.replace(~r/"icon-arrow-down-right"/, current_table, "\"glyphicon glyphicon-arrow-down\"")
-    %{html: html, result: Map.put(result, :current_table, current_table)}
+  defp replace_bootstrap_3_glyphicons(table_html) do
+    table_html = Regex.replace(~r/"icon-arrow-up"/, table_html, "\"glyphicon glyphicon-arrow-up\"")
+    table_html = Regex.replace(~r/"icon-arrow-right"/, table_html, "\"glyphicon glyphicon-arrow-right\"")
+    table_html = Regex.replace(~r/"icon-arrow-down"/, table_html, "\"glyphicon glyphicon-arrow-down\"")
+    table_html = Regex.replace(~r/"icon-arrow-left"/, table_html, "\"glyphicon glyphicon-arrow-left\"")
+    table_html = Regex.replace(~r/"icon-arrow-up-right"/, table_html, "\"glyphicon glyphicon-arrow-up\"")
+    Regex.replace(~r/"icon-arrow-down-right"/, table_html, "\"glyphicon glyphicon-arrow-down\"")
   end
 
   defp datetime_text_to_iso(text) do
