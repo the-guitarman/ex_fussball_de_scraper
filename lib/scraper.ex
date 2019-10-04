@@ -55,10 +55,7 @@ defmodule ExFussballDeScraper.Scraper do
   @spec grab_table(String.t) :: String.t
   def grab_table(page_html) do
     page_html
-    |> Floki.find(get_css_path(:current_table))
-    |> Floki.raw_html()
-    |> String.replace("\n", "")
-    |> String.replace("\t", "")
+    |> find_and_edit_table_html()
   end
 
   defp grab_current_table({:error, reason, created_at}), do: {:error, reason, created_at}
@@ -130,14 +127,20 @@ defmodule ExFussballDeScraper.Scraper do
   end
 
   defp find_table(%{html: page_html, result: result}) do
-    table_html =
-      page_html
-      |> grab_table()
-      |> remove_images()
-      |> remove_links()
-      |> replace_bootstrap_3_classes()
-      |> replace_bootstrap_3_glyphicons()
+    table_html = find_and_edit_table_html(page_html)
     %{html: page_html, result: Map.put(result, :current_table, table_html)}
+  end
+
+  defp find_and_edit_table_html(page_html) do
+    page_html
+    |> Floki.find(get_css_path(:current_table))
+    |> Floki.raw_html()
+    |> String.replace("\n", "")
+    |> String.replace("\t", "")
+    |> remove_images()
+    |> remove_links()
+    |> replace_bootstrap_3_classes()
+    |> replace_bootstrap_3_glyphicons()
   end
 
   defp remove_images(table_html) do
