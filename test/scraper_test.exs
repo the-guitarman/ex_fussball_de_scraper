@@ -2,6 +2,7 @@ defmodule ExFussballDeScraper.ScraperTest do
   use ExUnit.Case
   doctest ExFussballDeScraper.Scraper
 
+  @tag :team_matches
   test "grabbing of the next team matches" do
     {:ok, map, _created_at} = ExFussballDeScraper.Scraper.next_matches("club-name-team-rewrite", "team-id")
     assert map.team_name == "Spvgg. Blau-Weiß Chemnitz 02"
@@ -16,6 +17,7 @@ defmodule ExFussballDeScraper.ScraperTest do
     assert Enum.count(map.matches) == 10
   end
 
+  @tag :team_table_1
   test "grabbing of the current team table" do
     {:ok, map, _created_at} = ExFussballDeScraper.Scraper.current_table("club-name-team-rewrite", "team-id")
     assert map.team_name == "Spvgg. Blau-Weiß Chemnitz 02"
@@ -23,6 +25,7 @@ defmodule ExFussballDeScraper.ScraperTest do
     assert map.season == "2018-2019"
   end
 
+  @tag :team_table_2
   test "grabbing of the team table from the page html" do
     "file://" <> file = ExFussballDeScraper.File.build()
     {:ok, body} = File.read(file)

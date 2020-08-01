@@ -4,7 +4,7 @@ defmodule ExFussballDeScraper.MixProject do
   def project do
     [
       app: :ex_fussball_de_scraper,
-      version: "0.1.12",
+      version: "0.1.13",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       build_embedded: Mix.env == :prod,
@@ -29,7 +29,7 @@ defmodule ExFussballDeScraper.MixProject do
     [
       {:httpoison, "~> 1.7"},
       {:timex, "~> 3.6"},
-      {:floki, "~> 0.21"},
+      {:floki, "~> 0.27"},
       {:ex_doc, "~> 0.21", only: :dev}
     ]
   end

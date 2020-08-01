@@ -27,16 +27,15 @@ defmodule ExFussballDeScraper.Scraper do
   end
 
   defp grab_next_matches({:error, reason, created_at}), do: {:error, reason, created_at}
-  defp grab_next_matches({:ok, html, created_at}) do
+  defp grab_next_matches({:ok, doc, created_at}) do
     map =
-      %{html: html, result: %{}}
+      %{html: parse_document(doc), result: %{}}
       |> find_team_name()
       |> find_season()
       |> find_matches()
       |> get_result()
     {:ok, map, created_at}
   end
-
 
 
 
@@ -53,15 +52,16 @@ defmodule ExFussballDeScraper.Scraper do
   Grabs the table html from the given page html.
   """
   @spec grab_table(String.t) :: String.t
-  def grab_table(page_html) do
-    page_html
+  def grab_table(doc) do
+    doc
+    |> parse_document()
     |> find_and_edit_table_html()
   end
 
   defp grab_current_table({:error, reason, created_at}), do: {:error, reason, created_at}
-  defp grab_current_table({:ok, page_html, created_at}) do
+  defp grab_current_table({:ok, doc, created_at}) do
     map =
-      %{html: page_html, result: %{}}
+      %{html: parse_document(doc), result: %{}}
       |> find_team_name()
       |> find_season()
       |> find_table()
@@ -106,17 +106,21 @@ defmodule ExFussballDeScraper.Scraper do
 
   defp extract_match(markup) do
     id =
-      Floki.find(markup, get_css_path(:matches_match_id))
+      markup
+      |> Floki.find(get_css_path(:matches_match_id))
       |> Enum.filter(fn({_, _, [first | _rest]}) -> is_binary(first) end)
       |> Floki.text()
       |> String.trim()
     [start_at | [competition]] =
-      Floki.find(markup, get_css_path(:matches_match_headline))
+      markup
+      |> Floki.find(get_css_path(:matches_match_headline))
       |> List.first()
       |> Floki.text()
       |> String.split(get_css_path(:matches_match_headline_splitter))
       |> Enum.map(&String.trim/1)
-    club_names = Floki.find(markup, get_css_path(:matches_match_club_names))
+    club_names = 
+      markup
+      |> Floki.find(get_css_path(:matches_match_club_names))
     %{
       id: id,
       start_at: start_at |> datetime_text_to_iso(),
@@ -127,7 +131,8 @@ defmodule ExFussballDeScraper.Scraper do
   end
 
   defp find_table(%{html: page_html, result: result}) do
-    table_html = find_and_edit_table_html(page_html)
+    table_html = 
+      find_and_edit_table_html(page_html)
     %{html: page_html, result: Map.put(result, :current_table, table_html)}
   end
 
@@ -201,5 +206,22 @@ defmodule ExFussballDeScraper.Scraper do
   defp get_css_path(key) do
     keys = Application.get_env(:ex_fussball_de_scraper, :css, @css_defaults)
     keys[key]
+  end
+
+
+
+
+  defp parse_document(html_doc) do
+    case Floki.parse_document(html_doc) do
+      {:ok, html} -> html
+      _ -> ""
+    end
+  end
+
+  defp parse_fragment(html_fragment) do
+    case Floki.parse_fragment(html_fragment) do
+      {:ok, html} -> html
+      _ -> ""
+    end
   end
 end
