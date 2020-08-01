@@ -53,6 +53,10 @@ defmodule ExFussballDeScraper.GenServer do
       Map.get(new_data, main_key)
       |> get_reply()
 
+
+    IO.puts("ExFussballDeScraper.GenServer.get(#{team_rewrite}, #{team_id})")
+    IO.inspect(reply)
+
     {:reply, reply, new_data, get_timeout_config()}
   end
 

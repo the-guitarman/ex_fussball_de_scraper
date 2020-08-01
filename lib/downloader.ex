@@ -33,13 +33,20 @@ defmodule ExFussballDeScraper.Downloader do
 
   defp get_headers do
     [
-      {"User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0"}
+      {"User-Agent", get_user_agent()}
     ]
+  end
+
+  defp get_user_agent do
+    ExFussballDeScraper.Downloader.UserAgent.get(:random)
   end
 
   defp get_hackney_parameters do
     [
-      ssl: [{:verify, :verify_none}],
+      ssl: [
+        {:verify, :verify_none},
+        {:versions, [:"tlsv1.2", :"tlsv1.1", :tlsv1, :sslv3]}
+      ],
       follow_redirect: true
     ]
   end
