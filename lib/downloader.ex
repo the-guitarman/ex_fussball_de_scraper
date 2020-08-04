@@ -45,7 +45,7 @@ defmodule ExFussballDeScraper.Downloader do
     [
       ssl: [
         {:verify, :verify_none},
-        {:versions, [:"tlsv1.2", :"tlsv1.1", :tlsv1, :sslv3]}
+        {:versions, [:"tlsv1.2", :"tlsv1.1", :tlsv1]}
       ],
       follow_redirect: true
     ]
